@@ -4,8 +4,11 @@ from tqdm import tqdm
 import numpy as np
 import lmdb
 import os
+import pickle
+import zlib
 
 ###### LMDB IO ######
+# NOTICE: LMDB is not space efficent if per line data is less than 10K, 
 
 def export_lmdb(data_list, export_path, encoder, batch_size=1000):
     """
@@ -68,8 +71,7 @@ def import_lmdb(data_dir,decoder):
                 data_list.append(data)
             current_data_id = data_id
             data = {}
-
-        data[key] = value.decode()
+        data[key] = value
     # last line
     data_list.append(data)
     return data_list
@@ -81,9 +83,9 @@ def smart_encode_from_key(data_dict, img_quality=95):
     * numpy images: dict key should contain img
 
     Args:
-        data_dict (dict): input data
+        data_dict (dict): input data, dict of encodeables or numpy images
     Returns:
-        list of dict: recovered data
+        list of dict: recovered data, dict of bytes
     """
     encoded_dict = {}
     for key,value in data_dict.items():
@@ -101,9 +103,9 @@ def smart_decode_from_key(data_dict):
     * numpy images: dict key should contain img
 
     Args:
-        data_dict (dict): input data
+        data_dict (dict): input data, dict of bytes
     Returns:
-        list of dict: recovered data
+        list of dict: recovered data, dict of original data
     """
     decoded_dict = {}
     for key,value in data_dict.items():
@@ -115,7 +117,7 @@ def smart_decode_from_key(data_dict):
 
     return decoded_dict
 
-# dumb encoder/decoder
+# generalized encoder/decoder
 
 def obj_to_bin(obj):
     pickled_data = pickle.dumps(obj)
@@ -126,6 +128,31 @@ def bin_to_obj(bin):
     depressed_pickle = zlib.decompress(bin)
     obj = pickle.loads(depressed_pickle)
     return obj
+
+
+# msgpack
+import msgpack
+import msgpack_numpy as msg_np
+
+def serialize_message(message):
+    ser_message = msgpack.dumps(message)
+    return ser_message
+
+def deserialize_message(message):
+    des_message = msgpack.loads(message)
+    return des_message
+
+def serialize_np(arr):
+    """
+    fast serialize np array into latin string
+    """
+    return msgpack.packb(arr, default=msg_np.encode).decode('latin-1')
+
+def deserialize_np(arr):
+    """
+    fast serialize np array into latin string
+    """
+    return msgpack.unpackb(arr.encode('latin-1'), object_hook=msg_np.decode)
 
 ### notes
 

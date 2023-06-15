@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "ht2"
-version = "0.0.3"
+version = "0.1.1"
 authors = [
   { name="Haotian Zhang", email="z.haotian@columbia.edu" },
 ]
-description = "Frequently used tools and wrappers for efficiency"
+description = "Just a bag of quality of life tools for Machine Learning Engineers"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
@@ -19,7 +19,10 @@ classifiers = [
 dependencies = [
   "opencv-python",
   "matplotlib",
-  "numpy"
+  "numpy",
+  "lmdb",
+  "msgpack",
+  "msgpack_numpy"
 ]
 
 [project.urls]
