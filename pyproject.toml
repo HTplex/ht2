@@ -23,7 +23,8 @@ dependencies = [
   "lmdb",
   "msgpack",
   "msgpack_numpy",
-  "tqdm"
+  "tqdm",
+  "lz4"
 ]
 
 [project.urls]

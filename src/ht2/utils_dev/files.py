@@ -121,16 +121,6 @@ def smart_decode_from_key(data_dict):
 
 
 
-def obj_to_bin(obj):
-    pickled_data = pickle.dumps(obj)
-    compressed_pickle = zlib.compress(pickled_data, level = 1)
-    return compressed_pickle
-
-def bin_to_obj(bin):
-    depressed_pickle = zlib.decompress(bin)
-    obj = pickle.loads(depressed_pickle)
-    return obj
-
 
 # msgpack
 import msgpack
