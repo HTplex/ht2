@@ -26,7 +26,7 @@ def export_lmdb(data_list, export_path, encoder, batch_size=1000):
     
     os.makedirs(export_path, exist_ok=True)
     env = lmdb.open(export_path, map_size=2**40)
-    for i, data in enumerate(tqdm(data_list)):
+    for i, data in enumerate(data_list):
         data_id = str(i).zfill(13)
         data = encoder(data)
         for key,value in data.items():
@@ -62,7 +62,7 @@ def import_lmdb(data_dir,decoder):
     # start loading
     data_list = []
     current_data_id = ""
-    for key, value in tqdm(lmdb_cursor):
+    for key, value in lmdb_cursor:
         data_id,key = key.decode().split("_")
         
         if data_id != current_data_id: # new data line
@@ -119,9 +119,11 @@ def smart_decode_from_key(data_dict):
 
 # generalized encoder/decoder
 
+
+
 def obj_to_bin(obj):
     pickled_data = pickle.dumps(obj)
-    compressed_pickle = zlib.compress(pickled_data, level = 9)
+    compressed_pickle = zlib.compress(pickled_data, level = 1)
     return compressed_pickle
 
 def bin_to_obj(bin):

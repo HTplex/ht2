@@ -8,3 +8,6 @@ Just a bag of quality of life tools for Machine Learning Engineers
 ## post upgrades
 `python3 -m build`
 `python3 -m twine upload --repository pypi dist/*`
+
+## TODO
+* sphinx documentation
