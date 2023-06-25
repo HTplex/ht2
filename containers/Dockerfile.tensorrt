@@ -1,0 +1,5 @@
+FROM nvcr.io/nvidia/tensorrt:23.05-py3
+
+RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.8 get-pip.py
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache /wheels/*
