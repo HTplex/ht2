@@ -6,6 +6,8 @@ def peroid_run_script(script,wait_time):
 
 
 # parallel untar
-# find . -type f -name '*.tar.gz' -print0 | xargs -0 -P 16 -n1 tar -xvf
+def parallel_untar(filter):
+    # find . -type f -name '*.tar.gz' -print0 | xargs -0 -P 16 -n1 tar -xvf
+    return f"find . -type f -name '{filter}' -print0 | xargs -0 -P 16 -n1 tar -xvf"
 
 
