@@ -1,5 +1,19 @@
 FROM nvcr.io/nvidia/tensorrt:23.05-py3
 
-RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.8 get-pip.py
-RUN pip3 install --upgrade pip
-RUN pip3 install --no-cache /wheels/*
+WORKDIR /home/app
+# miniconda
+ENV PATH="/root/miniconda3/bin:${PATH}"
+ARG PATH="/root/miniconda3/bin:${PATH}"
+RUN apt-get update
+
+# install miniconda
+RUN apt-get install -y wget && rm -rf /var/lib/apt/lists/*
+RUN wget \
+    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    && bash Miniconda3-latest-Linux-x86_64.sh -b \
+    && rm -f Miniconda3-latest-Linux-x86_64.sh 
+RUN conda --version
+
+# RUN curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py && python3.8 get-pip.py
+# RUN pip3 install --upgrade pip
+# RUN pip3 install --no-cache /wheels/*

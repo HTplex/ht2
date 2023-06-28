@@ -13,3 +13,4 @@ services:
     volumes:
       - ~/dev/:/home/app/dev/
       - /data/:/data/
+    command: tail -f 

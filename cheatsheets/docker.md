@@ -27,4 +27,17 @@ sudo systemctl restart docker
 As of Jun.25.2023, docker compose no longer need extra installation 
 
 
-## basic commands
+## basic commands 
+build using docker compose + start docker
+`docker compose -f ./tensorrt.yaml up`
+list docker images
+`docker images`
+check containers
+`docker ps -a`
+attach docker
+`docker exec -it <container-id> /bin/bash`
+remove instance
+`docker rm <container-id> -f`
+remove image
+`docker rmi <images>`
+
