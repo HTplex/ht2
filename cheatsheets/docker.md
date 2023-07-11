@@ -29,7 +29,7 @@ As of Jun.25.2023, docker compose no longer need extra installation
 
 ## basic commands 
 build using docker compose + start docker
-`docker compose -f ./tensorrt.yaml up`
+`docker compose -f ./tensorrt.yaml up -d`
 list docker images
 `docker images`
 check containers

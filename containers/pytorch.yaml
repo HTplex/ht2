@@ -1,16 +1,19 @@
-version: '0.1'
+version: '1.0'
 
 services:
   local-dev:
     build:
       context: ./
-      dockerfile: ./Dockerfile.tensorrt
+      dockerfile: ./Dockerfile.pytorch
+      shm_size: '64gb'
+    shm_size: '64gb'
+    
     ports:
       - "10088:8888"
       - "10089:8889"
       - '10090:8890'
     runtime: nvidia
     volumes:
-      - ~/dev/:/home/app/dev/
+      - ~/dev/:/root/dev/
       - /data/:/data/
     command: tail -f 
