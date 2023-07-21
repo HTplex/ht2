@@ -2,8 +2,9 @@
 """
 import zlib
 import pickle
-import lz4.frame
-
+import cv2
+import base64
+import numpy as np
 
 
 def obj_to_bin(obj,compress_level=1):
@@ -17,7 +18,6 @@ def obj_to_bin(obj,compress_level=1):
         bin: binary
     Speed-time Trade offs:
         example 10000 images,
-        * lz4:                 4s,   455MB
         * zlib lvl1:           12s,  306MB
         * zlib lvl6 (default): 39s,  260M
         * zlib lvl9:           125s, 240MB
@@ -28,8 +28,6 @@ def obj_to_bin(obj,compress_level=1):
     pickled_data = pickle.dumps(obj)
     if compress_level == 0:
         pass
-    elif compress_level < 1: 
-        pickled_data = lz4.frame.compress(pickled_data)
     else:
         pickled_data = zlib.compress(pickled_data, level = compress_level)
     return pickled_data
@@ -42,8 +40,6 @@ def bin_to_obj(bin,decompress_algo='zlib'):
         depressed_pickle = zlib.decompress(bin)
     elif decompress_algo == '':
         depressed_pickle = bin
-    elif decompress_algo == 'lz4':
-        depressed_pickle = lz4.frame.compress(bin)
     obj = pickle.loads(depressed_pickle)
     return obj
 
@@ -55,3 +51,28 @@ def file_to_bytes(path):
     with open(path,'rb') as f:
         byte = f.read()
     return byte
+
+
+def img_to_b64str(img, mode='jpg',quality=95):
+    """
+    convert image to base64 string
+    """
+    encode_param = [int(cv2.IMWRITE_JPEG_QUALITY), quality]
+    if mode == 'jpg':
+        return base64.b64encode(cv2.imencode(
+            '.jpg',
+            img,
+            encode_param)[1]).decode()
+    if mode == 'png':
+        return base64.b64encode(cv2.imencode(
+            '.png',
+            img)[1]).decode()     
+
+def b64str_to_img(string):
+    """
+
+    """
+    jpg_original = base64.b64decode(string)
+    jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
+    img = cv2.imdecode(jpg_as_np, flags=1)
+    return img
