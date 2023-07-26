@@ -76,3 +76,24 @@ def b64str_to_img(string):
     jpg_as_np = np.frombuffer(jpg_original, dtype=np.uint8)
     img = cv2.imdecode(jpg_as_np, flags=1)
     return img
+
+
+def points_to_cnt(points,h,w):
+    """list of dict points (float0-1) into opencv cnt
+
+    Args:
+        points (list): [{'x': 0.777344, 'y': 0.029145},
+                        {'x': 0.779297, 'y': 0.029145},
+                        {'x': 0.830078, 'y': 0.034974},
+                        {'x': 0.914063, 'y': 0.035622}]
+    Returns:
+        np.array: cnt
+    """
+    cnt = []
+    for point in points:
+        cnt.append([int(point['x']*w),int(point['y']*h)])
+
+    cnt = np.array(cnt)
+    cnt = cnt.reshape((-1,1,2))
+    return cnt
+

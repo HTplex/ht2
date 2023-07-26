@@ -42,7 +42,7 @@ def random_augment_textlines(img):
         random_pan(img,color=255,h_pad=32,w_pad=100,crop=False)
     if random.random()<0.5:
         img = squeeze_image(img, squeeze_rate=3**random.uniform(-1,1))
-    if random.random()<0.2:
+    if random.random()<0.0:
         img = random_smear(img,n_time_factor=1)
     # noises
     if random.random()<0.5:
@@ -293,13 +293,17 @@ def random_smear(img,n_time_factor=1):
     img_warp = img.copy()
     n_times = int(max(1,(w/radius-2))*max(1,(h/radius-2))/4*n_time_factor)
     n_times = max(1,n_times)
+    n_time = min(50,n_times)
     for i in range(n_times):
-        x1 = random.randint(radius,w-radius-1)
-        y1 = random.randint(radius,h-radius-1)
-        x2 = random.randint(max(radius,x1-radius),min(w-radius-1,x1+radius))
-        y2 = random.randint(max(radius,y1-radius),min(h-radius-1,y1+radius))
-        # print(x1,y1,x2,y2,radius)
-        img_warp = _localTranslationWarp(img_warp, x1,y1,x2,y2,radius)
+        try:
+            x1 = random.randint(radius,w-radius-1)
+            y1 = random.randint(radius,h-radius-1)
+            x2 = random.randint(max(radius,x1-radius),min(w-radius-1,x1+radius))
+            y2 = random.randint(max(radius,y1-radius),min(h-radius-1,y1+radius))
+            # print(x1,y1,x2,y2,radius)
+            img_warp = _localTranslationWarp(img_warp, x1,y1,x2,y2,radius)
+        except:
+            pass
     return img_warp
 
 def _localTranslationWarp(srcImg, startX, startY, endX, endY, radius):
