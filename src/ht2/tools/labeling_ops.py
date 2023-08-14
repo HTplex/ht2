@@ -74,8 +74,80 @@ def parse_transcription_label_1(img,label):
     return [{"img":segment_imgs[i],
              "text":clean_latex_eng_label(segment_labels[i]["text"])} for i in range(len(segment_labels))]
         
+import jiwer
+import editdistance
 
+def compare_text_results(path,label_ext,pred_ext,ignore_case = True,ignore_punc=True):
+    """compare text results from two different sources,
+       sources are in the same folder with different exts,
+       example: 
+            path = "/data/ht2/ocr_results", label_ext = "_label", pred_ext = "_pred"
+        labels are /data/ht2/ocr_results/xxx_label.txt
+        preds are /data/ht2/ocr_results/xxx_pred.txt
+        calculate WER, CER save into list of dicts 
 
+    Args:
+        path (str): path to folder
+        label_ext (str): ext for label
+        pred_ext (str): ext for pred
+    Returns:
+        list: list of dicts like
+        {"label_path":label_path,
+         "pred_path":pred_path,
+         "label":label,
+         "label_len":label_len,
+         "label_word_len":label_word_len,
+         "pred":pred,
+         "wer":wer,
+         "cer":cer}
+        }
+    """
+    label_paths = glob(join(path,"*"+label_ext+".txt"))
+    pred_paths = glob(join(path,"*"+pred_ext+".txt"))
+    label_paths.sort()
+    pred_paths.sort()
+    assert len(label_paths) == len(pred_paths)
+    results = []
+    for label_path,pred_path in zip(label_paths,pred_paths):
+        with open(label_path,"r") as f:
+            label = f.read()
+        with open(pred_path,"r") as f:
+            pred = f.read()
+        label_len = len(label)            
+        label_word_len = len(label.split(" "))
+        if not label or not label.replace(" ",""):
+            wer = 0
+            cer = 0
+        elif not pred:
+            wer = 1
+            cer = 1
+        else:
+            label_eval = label
+            pred_eval = pred
+            if ignore_case:
+                label_eval = label_eval.lower()
+                pred_eval = pred_eval.lower()
+            if ignore_punc:
+                label_eval = label_eval.replace(".","")
+                label_eval = label_eval.replace(",","")
+                label_eval = label_eval.replace("。","")
+                pred_eval = pred_eval.replace("。","")
+                pred_eval = pred_eval.replace(".","")
+                pred_eval = pred_eval.replace(",","")
+                
+
+            wer = jiwer.wer(label_eval,pred_eval)
+            cer = editdistance.eval(label_eval,pred_eval)/label_len
+                
+        results.append({"label_path":label_path,
+                        "pred_path":pred_path,
+                        "label":label,
+                        "label_len":label_len,
+                        "label_word_len":label_word_len,
+                        "pred":pred,
+                        "wer":wer,
+                        "cer":cer})
+    return results
 
 
     

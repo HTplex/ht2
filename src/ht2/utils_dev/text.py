@@ -2,19 +2,59 @@ import re
 import random
 import numpy as np
 import editdistance
+import difflib
+from IPython.display import display, HTML
+
+def show_string_diffs(s1, s2):
+    # Get list of differences
+    differ = difflib.Differ()
+    diff_list = list(differ.compare(s1, s2))
+
+    # Define HTML wrappers
+    red_wrapper = "<span style='background-color: #FFA07A'>{}</span>"
+    green_wrapper = "<span style='background-color: #98FB98'>{}</span>"
+
+    # Initialize lists to hold processed words
+    s1_highlighted = []
+    s2_highlighted = []
+
+    # Process differences
+    for diff in diff_list:
+        if diff.startswith('- '):
+            s1_highlighted.append(red_wrapper.format(diff[2:]))
+        elif diff.startswith('+ '):
+            s2_highlighted.append(green_wrapper.format(diff[2:]))
+        elif diff.startswith('  '):
+            s1_highlighted.append(diff[2:])
+            s2_highlighted.append(diff[2:])
+
+    # Display the highlighted sentences
+    display(HTML(''.join(s1_highlighted)))
+    display(HTML(''.join(s2_highlighted)))
 
 def clean_up_english_spaces(string):
     """for a normal english sentence, check missing 
        trailing spaces after punchations, add if missing,
        check extra spaces before punchations, remove if extra
-       remove any 
-
+       no matter how many spaces between words, replace with one space
+        remove leading and trailing spaces
     :param string: input sentence
     :type string: str
     """
+    if not string:
+        return string
+    string = re.sub('\s{2,}', ' ', string)
+    if string[-1] == " ":
+        string = string[:-1]
+    if not string:
+        return string
+    if string[0] == " ":
+        string = string[1:]
     string = re.sub('([.,!?()])', r'\1 ', string)
     string = re.sub('\s([.,!?()])', r'\1', string)
     string = re.sub('\s{2,}', ' ', string)
+
+
     return string
 
 
@@ -154,3 +194,5 @@ def find_least_edit_substring(string,query):
             end_idx = i+len(query)
             min_edits = edits
     return (begin_idx,end_idx,min_edits)
+
+

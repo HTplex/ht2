@@ -6,6 +6,7 @@ import os
 from glob import glob
 import random
 from  src.ht2.utils_dev.visualize import show_img_np
+from src.ht2.utils_dev.text import show_string_diffs
 import cv2
 from tqdm import tqdm
 
@@ -54,13 +55,34 @@ class OCRLabeler:
             else:
                 psudo_label = ""
             psudo_labels.append(psudo_label)
+        
         return psudo_labels
     
-    
 
-    def label_session(self,exts,psudo_label_loader = load_same_path_psudo_label):
+    def label_session(self,exts,psudo_label_loader = load_same_path_psudo_label,skip_same=False):
         """label images
         """
+        # scan and count same psudo labels
+        n_all_same = 0
+        for i,p in tqdm(enumerate(self.images_paths)):
+
+            psudo_labels = psudo_label_loader(p,exts)
+            # show_img_np(cv2.imread(p))
+
+            all_same = False
+            if len(set(psudo_labels)) == 1:
+                all_same = True
+                n_all_same += 1
+
+            psudo_label = psudo_labels[0]
+            # save label
+            if skip_same and all_same:
+                save_path = splitext(p)[0]+self.tag+".txt"
+                with open(save_path,"w") as f:
+                    f.write(psudo_label)
+        print("{} out of {} are all same".format(n_all_same,len(self.images_paths)))
+
+
         for i,p in tqdm(enumerate(self.images_paths)):
             print("image {} of {}".format(i,len(self.images_paths)))
             print("path: {}".format(p))
@@ -68,17 +90,20 @@ class OCRLabeler:
             show_img_np(cv2.imread(p))
             for idx,psudo_label in enumerate(psudo_labels):
                 print("[plabel {}] {}".format(idx,psudo_label))
+            if len(psudo_labels) > 1:
+                show_string_diffs(psudo_labels[0],psudo_labels[1])
             all_same = False
             # check if all psudo labels are the same
             if len(set(psudo_labels)) == 1:
                 all_same = True
             print("[plabel matchs] ",all_same)
 
-            psudo_label = psudo_labels[0]
             # edit psudolabel 
             label = input("label: ")
             if label == "":
-                label = psudo_label
+                label = psudo_labels[0]
+            if label == " ":
+                label = psudo_labels[1]
             if label == "!!":
                 label = "[invalid]"
             

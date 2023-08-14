@@ -12,6 +12,7 @@ services:
       - "10088:8888"
       - "10089:8889"
       - '10090:8890'
+      - "15801:5801"
     runtime: nvidia
     volumes:
       - ~/dev/:/root/dev/
