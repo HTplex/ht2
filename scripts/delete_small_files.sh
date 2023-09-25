@@ -1,0 +1,1 @@
+du --max-depth 1 | awk '$1 < 1024' | cut -f 2- | xargs rm -rf
