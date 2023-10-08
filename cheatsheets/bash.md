@@ -13,7 +13,6 @@ run a script n times with args
 
 # typical parallel run script
 
-find -maxdepth 1 -type f -name "*.mp4" | \
-xargs -I {} -P 8 python ./spiga/demo/app.py --input {} --outpath /data/datasets_v2/faces_v3/
+`find /data/datasets_v2/clip_videos_v3/ -type f -name "2016*.mp4" | xargs -I {} -P 6 sh -c "CUDA_VISIBLE_DEVICES=0 python ./spiga/demo/app.py --input {} --outpath /data/datasets_v2/faces_v3/" &`
 
 
