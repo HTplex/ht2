@@ -7,3 +7,4 @@ lz4
 editdistance
 torch 
 torchvision
+skimage

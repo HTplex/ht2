@@ -18,8 +18,8 @@ parser.add_argument("-o","--export_path", type=str, default="./data/models/")
 
 if __name__ == "__main__":
     args = parser.parse_args()
-    tokenizer = AutoTokenizer.from_pretrained(args.model_name)
-    model = AutoModelForMaskedLM.from_pretrained(args.model_name)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_name,trust_remote_code=True)
+    model = AutoModelForMaskedLM.from_pretrained(args.model_name,trust_remote_code=True)
     export_path = join(args.export_path,args.model_name.replace("/","_"))
     # prepare input
     unmasker = pipeline('fill-mask', model='xlm-roberta-base')
