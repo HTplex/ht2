@@ -56,10 +56,7 @@ def chunk_up_folder(folder_path, chunk_size=4*1024**3):
         for item in chunk:
             # move file to new folder
             os.rename(item, join(chunk_path, os.path.basename(item)))
-        
-
-    pprint(chunks)
-    print(len(chunks))
+    print(f"splited into {len(chunks)} chunks")
 
 
 
@@ -98,5 +95,7 @@ def main():
 if __name__ == "__main__":
     main()
 
+    # clean up
+    # add parallel zip and unzip
 
 
